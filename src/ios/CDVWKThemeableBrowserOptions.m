@@ -55,6 +55,7 @@
         self.statusbar = nil;
         self.statusBarStyle = UIStatusBarStyleDefault;
         self.fullscreen = false;
+        self.longPressOnImageOptions = nil;
     }
 
     return self;

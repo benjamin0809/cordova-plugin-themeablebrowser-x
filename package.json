@@ -5,7 +5,7 @@
       "/Users/benjamin/Desktop/git app/iproud-app-3.0"
     ]
   ],
-  "_from": "git+https://github.com/benjamin0809/cordova-plugin-themeablebrowser-x.git",
+  "_from": "git+https://gitlab.efih-foxconn.com:HR/cordova-plugin-themeablebrowser-x.git",
   "_id": "cordova-plugin-themeablebrowser@0.2.18",
   "_inBundle": false,
   "_integrity": "",
@@ -13,24 +13,24 @@
   "_phantomChildren": {},
   "_requested": {
     "type": "git",
-    "raw": "https://github.com/benjamin0809/cordova-plugin-themeablebrowser-x.git",
-    "rawSpec": "https://github.com/benjamin0809/cordova-plugin-themeablebrowser-x.git",
-    "saveSpec": "git+https://github.com/benjamin0809/cordova-plugin-themeablebrowser-x.git",
-    "fetchSpec": "https://github.com/benjamin0809/cordova-plugin-themeablebrowser-x.git",
+    "raw": "https://gitlab.efih-foxconn.com:HR/cordova-plugin-themeablebrowser-x.git",
+    "rawSpec": "https://gitlab.efih-foxconn.com:HR/cordova-plugin-themeablebrowser-x.git",
+    "saveSpec": "git+https://gitlab.efih-foxconn.com:HR/cordova-plugin-themeablebrowser-x.git",
+    "fetchSpec": "https://gitlab.efih-foxconn.com:HR/cordova-plugin-themeablebrowser-x.git",
     "gitCommittish": null
   },
   "_requiredBy": [
     "#USER",
     "/"
   ],
-  "_resolved": "git+https://github.com/benjamin0809/cordova-plugin-themeablebrowser-x.git#ae3d1f5041cda68cfb4cd5f2454119e9a22477a1",
-  "_spec": "https://github.com/benjamin0809/cordova-plugin-themeablebrowser-x.git",
+  "_resolved": "git+https://gitlab.efih-foxconn.com:HR/cordova-plugin-themeablebrowser-x.git#ae3d1f5041cda68cfb4cd5f2454119e9a22477a1",
+  "_spec": "https://gitlab.efih-foxconn.com:HR/cordova-plugin-themeablebrowser-x.git",
   "_where": "H:\\app\\fit\\ionic4-for-iproud-app",
   "author": {
     "name": "Apache Software Foundation"
   },
   "bugs": {
-    "url": "https://github.com/benjamin0809/cordova-plugin-themeablebrowser-x/issues"
+    "url": "https://gitlab.efih-foxconn.com:HR/cordova-plugin-themeablebrowser-x/issues"
   },
   "bundleDependencies": false,
   "cordova": {
@@ -55,7 +55,7 @@
       "version": ">=3.1.0"
     }
   ],
-  "homepage": "https://github.com/benjamin0809/cordova-plugin-themeablebrowser-x#readme",
+  "homepage": "https://gitlab.efih-foxconn.com:HR/cordova-plugin-themeablebrowser-x#readme",
   "keywords": [
     "cordova",
     "in",
@@ -70,7 +70,7 @@
   "name": "cordova-plugin-themeablebrowser",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/benjamin0809/cordova-plugin-themeablebrowser-x.git"
+    "url": "git+https://gitlab.efih-foxconn.com:HR/cordova-plugin-themeablebrowser-x.git"
   },
   "version": "0.2.18"
 }

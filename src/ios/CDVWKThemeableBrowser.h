@@ -50,7 +50,7 @@
 
 @end
 
-@interface CDVWKThemeableBrowserViewController : UIViewController <CDVScreenOrientationDelegate,WKNavigationDelegate,WKUIDelegate,WKScriptMessageHandler>{
+@interface CDVWKThemeableBrowserViewController : UIViewController <CDVScreenOrientationDelegate,WKNavigationDelegate,WKUIDelegate,WKScriptMessageHandler,UIGestureRecognizerDelegate>{
     @private
     NSString* _userAgent;
     NSString* _prevUserAgent;
@@ -87,6 +87,7 @@
 - (void)setTitle:(NSString *) title;
 - (void)close;
 - (void)reload;
+- (void)goBack:(id)sender;
 - (void)navigateTo:(NSURL*)url;
 - (void)showLocationBar:(BOOL)show;
 - (void)showToolBar:(BOOL)show : (NSString *) toolbarPosition;

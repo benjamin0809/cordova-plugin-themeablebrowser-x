@@ -57,6 +57,7 @@
 @property (nonatomic) NSDictionary* backButton;
 //@property (nonatomic) NSDictionary* forwardButton;
 @property (nonatomic) NSDictionary* closeButton;
+@property (nonatomic) NSDictionary* longPressOnImageOptions;
 //
 //@property (nonatomic) NSArray* customButtons;
 //@property (nonatomic) BOOL backButtonCanClose;

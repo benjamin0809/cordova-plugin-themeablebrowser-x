@@ -27,8 +27,8 @@
     <description>Cordova ThemeableBrowser Plugin</description>
     <license>Apache 2.0</license>
     <keywords>cordova,in,app,browser,themeablebrowser</keywords>
-    <repo>https://github.com/benjamin0809/cordova-plugin-themeablebrowser-x.git</repo>
-    <issue>https://github.com/benjamin0809/cordova-plugin-themeablebrowser-x/issues</issue>
+    <repo>https://gitlab.efih-foxconn.com:HR/cordova-plugin-themeablebrowser-x.git</repo>
+    <issue>https://gitlab.efih-foxconn.com:HR/cordova-plugin-themeablebrowser-x/issues</issue>
 
     <engines>
       <engine name="cordova" version=">=3.1.0" />
@@ -50,7 +50,6 @@
         <source-file src="src/android/InAppChromeClient.java" target-dir="src/com/initialxy/cordova/themeablebrowser" />
         <source-file src="src/android/ThemeableBrowserUnmarshaller.java" target-dir="src/com/initialxy/cordova/themeablebrowser" />
 
-        
          <lib-file src="src/android/glide-4.1.1.jar" />
     </platform>
 

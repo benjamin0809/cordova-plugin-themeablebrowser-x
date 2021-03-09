@@ -64,8 +64,11 @@
 #define    kThemeableBrowserEmitCodeUnexpected @"unexpected"
 #define    kThemeableBrowserEmitCodeUndefined @"undefined"
 
+#define    kThemeableBrowserShareFriends @"LongPressShareToSession"
+#define    kThemeableBrowserShareTimeline @"LongPressShareToTimeline"
+
 #define    IAB_BRIDGE_NAME @"cordova_iab"
-#define    IAB_BRIDGE_EXTRA_API @"extra_api"
+#define    IAB_BRIDGE_EXTRA_API @"iProud"
 
 #define    TOOLBAR_HEIGHT 44.0
 #define    STATUSBAR_HEIGHT 20.0
@@ -73,13 +76,14 @@
 #define    FOOTER_HEIGHT ((TOOLBAR_HEIGHT) + (LOCATIONBAR_HEIGHT))
 
 #define iPhoneX (SCREEN_HEIGHT >= 812)
-
+#define iOS7_OR_EARLY ([[[UIDevice currentDevice] systemVersion] floatValue] < 8.0)
 #pragma mark CDVWKThemeableBrowser
 
 @interface CDVWKThemeableBrowser () {
     NSInteger _previousStatusBarStyle;
 }
 @end
+
 
 @implementation CDVWKThemeableBrowser
 
@@ -254,13 +258,14 @@ static CDVWKThemeableBrowser* instance = nil;
         NSString* userAgent = [CDVUserAgentUtil originalUserAgent];
         NSString* overrideUserAgent = [self settingForKey:@"OverrideUserAgent"];
         NSString* appendUserAgent = [self settingForKey:@"AppendUserAgent"];
+        //self.settings cordovaSettingForKey:@"AppendUserAgent"
         if(overrideUserAgent){
             userAgent = overrideUserAgent;
         }
         if(appendUserAgent){
             userAgent = [userAgent stringByAppendingString: appendUserAgent];
         }
-        userAgent = [userAgent stringByAppendingString: @" app/iproud"];
+        userAgent = [userAgent stringByAppendingString: @"/ThemeableBrowser"];
         
         self.themeBrowserViewController = [[CDVWKThemeableBrowserViewController alloc] initWithUserAgent:userAgent prevUserAgent:[self.commandDelegate userAgent] browserOptions: browserOptions];
         self.themeBrowserViewController.navigationDelegate = self;
@@ -695,10 +700,66 @@ static CDVWKThemeableBrowser* instance = nil;
             NSString* style = params[@"style"];
             [self.themeBrowserViewController setStatusBarStyle: style];
         } else if ([method isEqualToString:@"setTitle"]){
-            NSString* title = params[@"title"];
+            NSString* title = params[@"text"];
             [self.themeBrowserViewController setTitle: title];
-        } else if([method isEqualToString:@"close"]) {
+        } else if([method isEqualToString:@"closeWindow"]) {
             [self.themeBrowserViewController close];
+        } else if([method isEqualToString:@"reload"]) {
+            [self.themeBrowserViewController reload];
+        } else if([method isEqualToString:@"back"]) {
+            [self.themeBrowserViewController goBack:nil];
+        } else if([method isEqualToString:@"shareImageToWeChat"]){
+            NSMutableDictionary* dict = [NSMutableDictionary new];
+            [dict setObject:kThemeableBrowserShareFriends forKey:@"type"];
+            [dict setObject:[self.themeBrowserViewController.currentURL absoluteString] forKey:@"url"];
+            [dict setObject:params[@"imageUrl"] forKey:@"image"];
+            if (self.themeBrowserViewController.currentTitle != nil) {
+                 [dict setObject:self.themeBrowserViewController.currentTitle forKey:@"title"];//add current title 2018-12-17
+            }
+            [self.themeBrowserViewController.navigationDelegate emitEvent:dict];
+        } else if([method isEqualToString:@"shareImageToWeChatTimeline"]){
+            NSMutableDictionary* dict = [NSMutableDictionary new];
+            [dict setObject:kThemeableBrowserShareTimeline forKey:@"type"];
+            [dict setObject:[self.themeBrowserViewController.currentURL absoluteString] forKey:@"url"];
+            [dict setObject:params[@"imageUrl"] forKey:@"image"];
+            if (self.themeBrowserViewController.currentTitle != nil) {
+                 [dict setObject:self.themeBrowserViewController.currentTitle forKey:@"title"];//add current title 2018-12-17
+            }
+            [self.themeBrowserViewController.navigationDelegate emitEvent:dict];
+        }else if([method isEqualToString:@"shareWebPageToWeChat"]){
+            NSMutableDictionary* dict = [NSMutableDictionary new];
+            [dict setObject:@"shareFriends" forKey:@"type"];
+            [dict setObject:params[@"shareUrl"] forKey:@"url"];
+            [dict setObject:params[@"desc"] forKey:@"desc"];
+            [dict setObject:params[@"thumb"] forKey:@"thumb"];
+            if(params[@"title"] != nil ) {
+                [dict setObject:params[@"title"] forKey:@"title"];
+            } else if (self.themeBrowserViewController.currentTitle != nil) {
+                 [dict setObject:self.themeBrowserViewController.currentTitle forKey:@"title"];//add current title 2018-12-17
+            }
+            [self.themeBrowserViewController.navigationDelegate emitEvent:dict];
+        }else if([method isEqualToString:@"shareWebPageToWeChatTimeline"]){
+            NSMutableDictionary* dict = [NSMutableDictionary new];
+            [dict setObject:@"shareMoment" forKey:@"type"];
+            [dict setObject:params[@"shareUrl"] forKey:@"url"];
+            [dict setObject:params[@"desc"] forKey:@"desc"];
+            [dict setObject:params[@"thumb"] forKey:@"thumb"];
+            if(params[@"title"] != nil ) {
+                [dict setObject:params[@"title"] forKey:@"title"];
+            } else if (self.themeBrowserViewController.currentTitle != nil) {
+                 [dict setObject:self.themeBrowserViewController.currentTitle forKey:@"title"];//add current title 2018-12-17
+            }
+            [self.themeBrowserViewController.navigationDelegate emitEvent:dict];
+        }else if([method isEqualToString:@"openQRCodeScanner"]){
+            NSMutableDictionary* dict = [NSMutableDictionary new];
+            [dict setObject:@"qrcode" forKey:@"type"];
+            [dict setObject:params[@"appendParams"] forKey:@"appendParams"];
+            if(params[@"title"] != nil ) {
+                [dict setObject:params[@"title"] forKey:@"title"];
+            } else if (self.themeBrowserViewController.currentTitle != nil) {
+                 [dict setObject:self.themeBrowserViewController.currentTitle forKey:@"title"];//add current title 2018-12-17
+            }
+            [self.themeBrowserViewController.navigationDelegate emitEvent:dict];
         }
         
     }
@@ -892,7 +953,7 @@ BOOL isOpen = NO;
      [self.webView removeObserver:self forKeyPath:@"estimatedProgress"];
 }
 
-
+ 
 - (void)createViews
 {
     // We create the views in code for primarily for ease of upgrades and not requiring an external .xib to be included
@@ -907,6 +968,11 @@ BOOL isOpen = NO;
     
     WKUserContentController* userContentController = [[WKUserContentController alloc] init];
     
+    NSMutableString *javascript = [NSMutableString string];
+    [javascript appendString:@"document.documentElement.style.webkitTouchCallout='none';"];//禁止长按
+    WKUserScript *noneSelectScript = [[WKUserScript alloc] initWithSource:javascript injectionTime:WKUserScriptInjectionTimeAtDocumentEnd forMainFrameOnly:YES];
+    [userContentController addUserScript:noneSelectScript];
+    
     WKWebViewConfiguration* configuration = [[WKWebViewConfiguration alloc] init];
     configuration.userContentController = userContentController;
 #if __has_include("CDVWKProcessPoolFactory.h")
@@ -916,7 +982,8 @@ BOOL isOpen = NO;
     [configuration.userContentController addScriptMessageHandler:self name:IAB_BRIDGE_EXTRA_API];
     
     //WKWebView options
-    configuration.allowsInlineMediaPlayback = _browserOptions.allowinlinemediaplayback;
+    configuration.allowsInlineMediaPlayback = YES;
+    // _browserOptions.allowinlinemediaplayback;
     if (IsAtLeastiOSVersion(@"10.0")) {
         configuration.ignoresViewportScaleLimits = _browserOptions.enableviewportscale;
         if(_browserOptions.mediaplaybackrequiresuseraction == YES){
@@ -931,7 +998,11 @@ BOOL isOpen = NO;
        self.view.backgroundColor = bg_color;
     self.webView = [[WKWebView alloc] initWithFrame:webViewBounds configuration:configuration];
     self.webView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
-    
+    UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPress:)];
+    longPress.minimumPressDuration = 0.6f;
+    longPress.delegate = self;
+    [self.webView addGestureRecognizer:longPress];
+
     [self.view addSubview:self.webView];
     [self.view sendSubviewToBack:self.webView];
     
@@ -954,7 +1025,7 @@ BOOL isOpen = NO;
     self.webView.userInteractionEnabled = YES;
     [self.webView setAutoresizingMask:UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth];
     self.webView.allowsLinkPreview = NO;
-    self.webView.allowsBackForwardNavigationGestures = YES;
+    //self.webView.allowsBackForwardNavigationGestures = YES;
     
     [self.webView addObserver:self forKeyPath:@"estimatedProgress" options:NSKeyValueObservingOptionNew context:nil];
     
@@ -1115,6 +1186,14 @@ BOOL isOpen = NO;
     
      [self.view addSubview:self.toolbar];
     // [self.view addSubview:self.spinner];
+}
+
+// add gestureRecognizer
+#pragma mark - UIGestureRecognizerDelegate
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+{
+    return YES;
 }
 
 - (void)layoutButtons
@@ -1310,6 +1389,24 @@ BOOL isOpen = NO;
         }
     });
 }
+- (void)back
+{
+    [self emitEventForButton:_browserOptions.backButton];
+    if (self.webView.canGoBack) {
+        [self.webView goBack];
+    } else {
+        [self close];
+    }
+}
+- (void)goBack:(id)sender
+{
+    [self emitEventForButton:_browserOptions.backButton];
+    if (self.webView.canGoBack) {
+        [self.webView goBack];
+    } else {
+        [self close];
+    }
+}
 
 - (void)navigateTo:(NSURL*)url
 {
@@ -1327,15 +1424,7 @@ BOOL isOpen = NO;
     }
 }
 
-- (void)goBack:(id)sender
-{
-    [self emitEventForButton:_browserOptions.backButton];
-    if (self.webView.canGoBack) {
-        [self.webView goBack];
-    } else {
-        [self close];
-    }
-}
+
 
 
 - (void)emitEventForButton:(NSDictionary*)buttonProps
@@ -1371,7 +1460,91 @@ BOOL isOpen = NO;
 }
 
 
-
+- (void)longPressMenu:(NSString* )imageUrl{
+    UIAlertController *alertController = [UIAlertController
+                                          alertControllerWithTitle:_browserOptions.menu[kThemeableBrowserPropTitle]
+                                          message:nil
+                                          preferredStyle:UIAlertControllerStyleActionSheet];
+    alertController.popoverPresentationController.sourceView
+            = self.menuButton;
+    alertController.popoverPresentationController.sourceRect
+            = self.menuButton.bounds;
+    
+    // define saveImage action
+    UIAlertAction *saveImage = [UIAlertAction
+                         actionWithTitle:_browserOptions.longPressOnImageOptions[@"saveImage"]
+                         style:UIAlertActionStyleDefault
+                         handler:^(UIAlertAction *action) {
+                             //NSLog(@"Click on SaveImage Button");
+        NSData *data = [NSData dataWithContentsOfURL:[NSURL URLWithString:imageUrl]];
+        UIImage *image = [UIImage imageWithData:data];
+        UIImageWriteToSavedPhotosAlbum(image, self, @selector(image:didFinishSavingWithError:contextInfo:), nil);
+                         }];
+    [alertController addAction:saveImage];
+    
+    // define shareImageToSession action
+    UIAlertAction *shareImageToSession = [UIAlertAction
+                         actionWithTitle:_browserOptions.longPressOnImageOptions[@"shareToWeChat"]
+                         style:UIAlertActionStyleDefault
+                         handler:^(UIAlertAction *action) {
+                            // NSLog(@"Click on shareImageToSession Button");
+                            NSMutableDictionary* dict = [NSMutableDictionary new];
+                            [dict setObject:kThemeableBrowserShareFriends forKey:@"type"];
+                            [dict setObject:[self.navigationDelegate.themeBrowserViewController.currentURL absoluteString] forKey:@"url"];
+                            [dict setObject:imageUrl forKey:@"image"];
+                            if (self.navigationDelegate.themeBrowserViewController.currentTitle != nil) {
+                                 [dict setObject:self.navigationDelegate.themeBrowserViewController.currentTitle forKey:@"title"];//add current title 2018-12-17
+                            }
+                            [self.navigationDelegate emitEvent:dict];
+                         }];
+    [alertController addAction:shareImageToSession];
+    
+    // define shareImageToTimeline action
+    UIAlertAction *shareImageToTimeline = [UIAlertAction
+                         actionWithTitle:_browserOptions.longPressOnImageOptions[@"shareToWeChatTimeline"]
+                         style:UIAlertActionStyleDefault
+                         handler:^(UIAlertAction *action) {
+                             //NSLog(@"Click on shareImageToTimeline Button");
+                                NSMutableDictionary* dict = [NSMutableDictionary new];
+                                [dict setObject:kThemeableBrowserShareTimeline forKey:@"type"];
+                                [dict setObject:[self.navigationDelegate.themeBrowserViewController.currentURL absoluteString] forKey:@"url"];
+                                [dict setObject:imageUrl forKey:@"image"];
+                                if (self.navigationDelegate.themeBrowserViewController.currentTitle != nil) {
+                                     [dict setObject:self.navigationDelegate.themeBrowserViewController.currentTitle forKey:@"title"];//add current title 2018-12-17
+                                }
+                                [self.navigationDelegate emitEvent:dict];
+                         }];
+    [alertController addAction:shareImageToTimeline];
+    NSData *data = [NSData dataWithContentsOfURL:[NSURL URLWithString:imageUrl]];
+    UIImage *image = [UIImage imageWithData:data];
+    
+    NSString* str = [self isAvailableQRcodeIn:image];
+    
+    if (str != nil) {
+        UIAlertAction *recognitionQRCode = [UIAlertAction
+                             actionWithTitle:_browserOptions.longPressOnImageOptions[@"recognitionQRCode"]
+                             style:UIAlertActionStyleDefault
+                             handler:^(UIAlertAction *action) {
+            if([self isValidUrl:str]) {
+                NSURL *url = [NSURL URLWithString:str];
+                [self navigateTo: url];
+            }else {
+                NSString* scanResultWebSite = self->_browserOptions.longPressOnImageOptions[@"scanResultWebSite"];
+                NSURL *url = [NSURL URLWithString:[scanResultWebSite stringByAppendingString: [str stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]]];
+                [self navigateTo: url];
+            }
+        }];
+        [alertController addAction:recognitionQRCode];
+    }
+    UIAlertAction *cancelAction = [UIAlertAction
+                                   actionWithTitle:_browserOptions.menu[kThemeableBrowserPropCancel]
+                                   style:UIAlertActionStyleCancel
+                                   handler:nil];
+    [alertController addAction:cancelAction];
+    
+    // present alertController
+    [self presentViewController:alertController animated:YES completion:nil];
+}
 
 - (void)goMenu:(id)sender
 {
@@ -1660,7 +1833,7 @@ BOOL isOpen = NO;
     
     self.progressView.hidden = NO;
     //开始加载网页的时候将progressView的Height恢复为1.5倍
-    self.progressView.transform = CGAffineTransformMakeScale(1.0f, 1.0f);
+    self.progressView.transform = CGAffineTransformMakeScale(1.0f, 0.5f);
     //防止progressView被网页挡住
     [self.view bringSubviewToFront:self.progressView];
     
@@ -1763,7 +1936,7 @@ BOOL isOpen = NO;
              *动画结束后将progressView隐藏
              */
             [UIView animateWithDuration:0.25f delay:0.3f options:UIViewAnimationOptionCurveEaseOut animations:^{
-                self.progressView.transform = CGAffineTransformMakeScale(1.0f, 1.0f);
+                self.progressView.transform = CGAffineTransformMakeScale(1.0f, 0.3f);
             } completion:^(BOOL finished) {
                 self.progressView.hidden = YES;
 
@@ -1772,6 +1945,129 @@ BOOL isOpen = NO;
     }else{
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
     }
+}
+
+#pragma mark - Save image callback
+
+- (void)image:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo
+{
+    NSString *message = @"Succeed";
+    
+    if (error) {
+        message = @"Fail";
+    }
+    // NSLog(@"save result :%@", message);
+}
+
+- (void)handleLongPress:(UILongPressGestureRecognizer *)sender{
+    if (sender.state != UIGestureRecognizerStateBegan) {
+    return;
+    }
+    CGPoint touchPoint = [sender locationInView:self.webView];
+    // 获取长按位置对应的图片url的JS代码
+    NSString *imgJS = [NSString stringWithFormat:@"document.elementFromPoint(%f, %f).src", touchPoint.x, touchPoint.y];
+    // 执行对应的JS代码 获取url
+    [self.webView evaluateJavaScript:imgJS completionHandler:^(id _Nullable imgUrl, NSError * _Nullable error) {
+    if (imgUrl) {
+        NSData *data = [NSData dataWithContentsOfURL:[NSURL URLWithString:imgUrl]];
+        UIImage *image = [UIImage imageWithData:data];
+        if (!image) {
+        NSLog(@"读取图片失败");
+        return;
+        }
+        [self longPressMenu:imgUrl];
+    }
+}];
+}
+
+
+- (BOOL)isValidUrl:(NSString *)str
+{
+    NSString *regex =@"[a-zA-z]+://[^\\s]*";
+    NSPredicate *urlTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@",regex];
+    return [urlTest evaluateWithObject:str];
+}
+
+- (NSString *)isAvailableQRcodeIn:(UIImage *)img
+{
+    if (iOS7_OR_EARLY) {
+        return nil;
+    }
+    
+    //Extract QR code by screenshot
+    //UIImage *image = [self snapshot:self.view];
+    
+    UIImage *image = [self imageByInsetEdge:UIEdgeInsetsMake(-20, -20, -20, -20) withColor:[UIColor lightGrayColor] withImage:img];
+    
+    CIDetector *detector = [CIDetector detectorOfType:CIDetectorTypeQRCode context:nil options:@{}];
+    
+    NSArray *features = [detector featuresInImage:[CIImage imageWithCGImage:image.CGImage]];
+    
+    if (features.count >= 1) {
+        CIQRCodeFeature *feature = [features objectAtIndex:0];
+        
+        NSLog(@"QR result :%@", [feature.messageString copy]);
+        
+        return [feature.messageString copy];;
+    } else {
+        NSLog(@"No QR");
+        return nil;
+    }
+}
+
+
+
+// you can also implement by UIView category
+- (UIImage *)snapshot:(UIView *)view
+{
+    UIGraphicsBeginImageContextWithOptions(view.bounds.size, YES, view.window.screen.scale);
+    
+    if ([view respondsToSelector:@selector(drawViewHierarchyInRect:afterScreenUpdates:)]) {
+        [view drawViewHierarchyInRect:view.bounds afterScreenUpdates:YES];
+    }
+    UIImage* image = UIGraphicsGetImageFromCurrentImageContext();
+    
+    UIGraphicsEndImageContext();
+    
+    return image;
+}
+
+// you can also implement by UIImage category
+- (UIImage *)imageByInsetEdge:(UIEdgeInsets)insets withColor:(UIColor *)color withImage:(UIImage *)image
+{
+    CGSize size = image.size;
+    size.width -= insets.left + insets.right;
+    size.height -= insets.top + insets.bottom;
+    if (size.width <= 0 || size.height <= 0) {
+        return nil;
+    }
+    CGRect rect = CGRectMake(-insets.left, -insets.top, image.size.width, image.size.height);
+    UIGraphicsBeginImageContextWithOptions(size, NO, image.scale);
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    if (color) {
+        CGContextSetFillColorWithColor(context, color.CGColor);
+        CGMutablePathRef path = CGPathCreateMutable();
+        CGPathAddRect(path, NULL, CGRectMake(0, 0, size.width, size.height));
+        CGPathAddRect(path, NULL, rect);
+        CGContextAddPath(context, path);
+        CGContextEOFillPath(context);
+        CGPathRelease(path);
+    }
+    [image drawInRect:rect];
+    UIImage *insetEdgedImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    return insetEdgedImage;
+}
+
+- (NSURL *)autoFillURL:(NSURL *)url
+{
+    //If no URL scheme was supplied, defer back to HTTP.
+    if (url.scheme.length == 0) {
+        url = [NSURL URLWithString:[NSString stringWithFormat:@"http://%@", [url absoluteString]]];
+    }
+    
+    return url;
 }
 
 #pragma mark WKScriptMessageHandler delegate
