@@ -82,10 +82,10 @@
 @property (nonatomic) NSString* currentTitle; //add current title by zhaogx 2018-12-17
 @property (nonatomic) BOOL isDismiss;
 
+- (void)close;
 - (void)setWebViewFullscreen:(BOOL)show;
 - (void)setStatusBarStyle:(NSString *) style;
 - (void)setTitle:(NSString *) title;
-- (void)close;
 - (void)reload;
 - (void)navigateTo:(NSURL*)url;
 - (void)showLocationBar:(BOOL)show;

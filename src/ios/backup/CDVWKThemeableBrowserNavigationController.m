@@ -31,21 +31,12 @@
 
 - (void) viewDidLoad {
 
-//    CGRect statusBarFrame = [self invertFrameIfNeeded:[UIApplication sharedApplication].statusBarFrame];
-//    bool hasTopNotch = NO;
-//       if (@available(iOS 11.0, *)) {
-//           hasTopNotch = [[[UIApplication sharedApplication] delegate] window].safeAreaInsets.top > 20.0;
-//       }
-//       if(hasTopNotch){
-//           statusBarFrame.size.height = [UIApplication sharedApplication].statusBarFrame.size.height;
-//       } else {
-//           statusBarFrame.size.height = STATUSBAR_HEIGHT;
-//       }
+    CGRect statusBarFrame = [self invertFrameIfNeeded:[UIApplication sharedApplication].statusBarFrame];
     //statusBarFrame.size.height = STATUSBAR_HEIGHT;
     // simplified from: http://stackoverflow.com/a/25669695/219684
 
 //    UIToolbar* bgToolbar = [[UIToolbar alloc] initWithFrame:statusBarFrame];
-//    bgToolbar.barStyle = UIBarStyleBlack;
+//    bgToolbar.barStyle = UIBarStyleDefault;
 //    [bgToolbar setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
 //    [self.view addSubview:bgToolbar];
 

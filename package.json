@@ -5,34 +5,34 @@
       "/Users/benjamin/Desktop/git app/iproud-app-3.0"
     ]
   ],
-  "_from": "cordova-plugin-themeablebrowser@0.2.18",
+  "_from": "git+https://github.com/benjamin0809/cordova-plugin-themeablebrowser-x.git",
   "_id": "cordova-plugin-themeablebrowser@0.2.18",
   "_inBundle": false,
-  "_integrity": "sha1-IBvfFEHJb4tovZyjOcbv18xoCbQ=",
+  "_integrity": "",
   "_location": "/cordova-plugin-themeablebrowser",
   "_phantomChildren": {},
   "_requested": {
-    "type": "version",
-    "registry": true,
-    "raw": "cordova-plugin-themeablebrowser@0.2.18",
-    "name": "cordova-plugin-themeablebrowser",
-    "escapedName": "cordova-plugin-themeablebrowser",
-    "rawSpec": "0.2.18",
-    "saveSpec": null,
-    "fetchSpec": "0.2.18"
+    "type": "git",
+    "raw": "https://github.com/benjamin0809/cordova-plugin-themeablebrowser-x.git",
+    "rawSpec": "https://github.com/benjamin0809/cordova-plugin-themeablebrowser-x.git",
+    "saveSpec": "git+https://github.com/benjamin0809/cordova-plugin-themeablebrowser-x.git",
+    "fetchSpec": "https://github.com/benjamin0809/cordova-plugin-themeablebrowser-x.git",
+    "gitCommittish": null
   },
   "_requiredBy": [
+    "#USER",
     "/"
   ],
-  "_resolved": "https://registry.npm.taobao.org/cordova-plugin-themeablebrowser/download/cordova-plugin-themeablebrowser-0.2.18.tgz",
-  "_spec": "0.2.18",
-  "_where": "/Users/benjamin/Desktop/git app/iproud-app-3.0",
+  "_resolved": "git+https://github.com/benjamin0809/cordova-plugin-themeablebrowser-x.git#ae3d1f5041cda68cfb4cd5f2454119e9a22477a1",
+  "_spec": "https://github.com/benjamin0809/cordova-plugin-themeablebrowser-x.git",
+  "_where": "H:\\app\\fit\\ionic4-for-iproud-app",
   "author": {
     "name": "Apache Software Foundation"
   },
   "bugs": {
     "url": "https://github.com/benjamin0809/cordova-plugin-themeablebrowser-x/issues"
   },
+  "bundleDependencies": false,
   "cordova": {
     "id": "cordova-plugin-themeablebrowser",
     "platforms": [
@@ -47,6 +47,7 @@
       "firefoxos"
     ]
   },
+  "deprecated": false,
   "description": "Cordova ThemeableBrowser Plugin",
   "engines": [
     {
@@ -69,7 +70,7 @@
   "name": "cordova-plugin-themeablebrowser",
   "repository": {
     "type": "git",
-    "url": "https://github.com/benjamin0809/cordova-plugin-themeablebrowser-x.git"
+    "url": "git+https://github.com/benjamin0809/cordova-plugin-themeablebrowser-x.git"
   },
   "version": "0.2.18"
 }
